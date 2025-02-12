@@ -1,17 +1,26 @@
-from .calculation import Calculation 
+from .calculation import Calculation
 
-class Calculations:
-    """Class to store and manage calculation history"""
-    history = []
+class Calculator:
+    """Calculator using Calculation class"""
 
-    @classmethod
-    def add_calculation(cls, calculation: Calculation):
-        cls.history.append(calculation)
+    @staticmethod
+    def add(a: float, b: float) -> float:
+        """Add two numbers"""
+        return Calculation(a, b, lambda x, y: x + y).perform_calculation()
 
-    @classmethod
-    def get_last_calculation(cls):
-        return cls.history[-1] if cls.history else None
+    @staticmethod
+    def subtract(a: float, b: float) -> float:
+        """Subtract two numbers"""
+        return Calculation(a, b, lambda x, y: x - y).perform_calculation()
 
-    @classmethod
-    def clear_history(cls):
-        cls.history.clear()
+    @staticmethod
+    def multiply(a: float, b: float) -> float:
+        """Multiply two numbers"""
+        return Calculation(a, b, lambda x, y: x * y).perform_calculation()
+
+    @staticmethod
+    def divide(a: float, b: float) -> float:
+        """Divide two numbers"""
+        if b == 0:
+            raise ZeroDivisionError("Cannot divide by zero.")
+        return Calculation(a, b, lambda x, y: x / y).perform_calculation()
