@@ -1,17 +1,35 @@
+import logging
+from dotenv import load_dotenv
+import os
+from decimal import Decimal
+from app.command_handler import handle_command, get_menu
+from app.plugin_loader import PluginLoader
+
+# Set up logging configuration
+logging.basicConfig(level=logging.INFO)
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Now you can access your environment variables, e.g., MY_SECRET_KEY
+secret_key = os.getenv("MY_SECRET_KEY")
+logging.info(f"Secret Key: {secret_key}")  # Log the secret key for verification
+
+# Import your command classes
 from commands.add import AddCommand
 from commands.subtract import SubtractCommand
 from commands.multiply import MultiplyCommand
 from commands.divide import DivideCommand
-
-# main.py
-from app.command_handler import handle_command, get_menu
-from app.plugin_loader import PluginLoader
 
 def calculate_and_print(a_string, b_string, operation_string):
     try:
         a = float(a_string)
         b = float(b_string)
     except ValueError:
+        # Log the error for tracking in logs
+        logging.error(f"Invalid number input: {a_string} or {b_string} is not a valid number.")
+        
+        # Print the error for pytest to capture it during testing
         print(f"Invalid number input: {a_string} or {b_string} is not a valid number.")
         return
 
@@ -31,7 +49,7 @@ def calculate_and_print(a_string, b_string, operation_string):
 
 def repl():
     """Read-Eval-Print Loop for calculator."""
-    print("Running REPL mode...\n")
+    logging.info("Running REPL mode...\n")
     print(get_menu())
     
     while True:
@@ -40,17 +58,20 @@ def repl():
         
         # If the user types 'exit', break the loop and exit
         if user_input.lower() == 'exit':
+            logging.info("Exiting REPL mode.")
             print("Exiting REPL mode.")
             break
 
         # Handle menu command
         if user_input.lower() == 'menu':
+            logging.info("Displaying menu")
             print(get_menu())
             continue
 
         # Split the input into components
         parts = user_input.split()
         if len(parts) != 3:
+            logging.warning("Invalid input format. Please enter in the format: <number> <number> <operation>")
             print("Invalid input. Please enter in the format: <number> <number> <operation>")
             continue
 
@@ -61,7 +82,7 @@ def repl():
         calculate_and_print(a_string, b_string, operation_string)
 
 if __name__ == "__main__":
-     print("Select mode:")
+     logging.info("Select mode:")
      print("1. Regular calculator")
      print("2. Calculator with multiprocessing")
      choice = input("Enter choice (1 or 2): ")
